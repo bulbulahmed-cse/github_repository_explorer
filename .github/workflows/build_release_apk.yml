@@ -2,7 +2,8 @@ name: Build & Release APK
 
 on:
   push:
-    branches: [ main ]  # Main push e automatic run hobe
+    tags:
+      - 'v*'
 
 jobs:
   build_release_apk:
@@ -27,25 +28,15 @@ jobs:
       - name: Build Release APK
         run: flutter build apk --release
 
-      # 5️⃣ Create a tag (v1, v2, …)
-      - name: Create Tag
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          TAG_NAME="v${{ github.run_number }}"
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
-        id: tag_step
-
-      # 6️⃣ Create GitHub Release
+      # 5️⃣ Create GitHub Release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.tag_step.outputs.TAG_NAME }}
+          tag_name: ${{ github.ref_name }}  # current pushed tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 7️⃣ Upload APK to Release
+      # 6️⃣ Upload APK to Release
       - name: Upload APK to Release
         uses: softprops/action-gh-release@v1
         with:
