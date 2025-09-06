@@ -1,4 +1,4 @@
-name: Build & Release Android
+name: Build & Release Web
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build_release_android:
+  build_release_web:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,8 +21,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Android APK
-        run: flutter build apk --release
+      - name: Build Web Release
+        run: flutter build web --release
+
+      - name: Zip Web Build
+        run: |
+          cd build/web
+          zip -r ../web-release.zip .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -31,9 +36,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Android APK
+      - name: Upload Web Build
         uses: softprops/action-gh-release@v1
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: build/web-release.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

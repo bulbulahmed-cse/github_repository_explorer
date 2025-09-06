@@ -1,4 +1,4 @@
-name: Build & Release Android
+name: Build & Release iOS
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - 'v*'
 
 jobs:
-  build_release_android:
-    runs-on: ubuntu-latest
+  build_release_ios:
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Android APK
-        run: flutter build apk --release
+      - name: Build iOS Release
+        run: flutter build ios --release --no-codesign
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -31,9 +31,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Android APK
+      - name: Upload iOS Build
         uses: softprops/action-gh-release@v1
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: build/ios/iphoneos/*.app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
